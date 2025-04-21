@@ -1,0 +1,72 @@
+{
+  "name": "iec60870-104multi",
+  "description": "Client 60870-5-104 multi",
+
+  "single": 0,
+  "innerId": 1,
+  "hasTryStartState":1,
+  "linkChstatus":1,
+
+  "share_node_folder_fields":["nodeip", "nodeport", "asduAddress", "use_redundancy", "host_redundancy", "k", "w", "t0", "t1", "t2", "t3", "tzondevice"],
+
+  "channel_popup": {
+    "add": [
+      { "id": "channel_folder", "title": "$NewFolder" },
+      { "id": "channel_node_folder", "title": "$NewNode" },
+      { "id": "channel_read", "title": "$ChannelRead" },
+      { "id": "channel_write", "title": "$ChannelWrite" }
+    ],
+    "copypaste": true,
+    "delete": true
+  },
+
+  "channel_folder_popup": {
+    "add": [
+      { "id": "channel_folder", "title": "$NewFolder" },
+      { "id": "channel_node_folder", "title": "$NewNode" },
+      { "id": "channel_read", "title": "$ChannelRead" },  
+      { "id": "channel_write", "title": "$ChannelWrite" }    
+    ],
+    "browse":{"variant":"subtree"},
+    "copypaste": true,
+    "delete": true
+  },
+
+  "default_channel_node_folder": {
+    "foldertype": "node",
+    "nodeip": "192.168.0.245",
+    "nodeport": 2404,
+    "asduAddress": 1,
+    "use_redundancy": false,
+    "host_redundancy": "192.168.0.125",
+    "k": 12,
+    "w": 8,
+    "t0":30,
+    "t1":15,
+    "t2":10,
+    "t3":20,
+    "tzondevice":"+3"
+  },
+
+  "default_channel_read": {
+    "r": 1,
+    "title": "Control Object 1",
+    "bit": 0,
+    "offset": 0,
+    "ioObjMtype": "1",
+    "objAdr": 1,
+    "asduGroup": false,
+    "asduGroupAddress": 1
+  },
+
+  "default_channel_write": {
+    "w": 1,
+    "title": "Command Object 1",
+    "ioObjCtype": "45",
+    "selCmd": false,
+    "ql": "0",
+    "objAdr": 1,
+    "asduGroup": false,
+    "asduGroupAddress": 1
+  }
+}

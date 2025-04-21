@@ -1,0 +1,6 @@
+{
+  "id":"iec60870-104multi",
+  "description":"Client for IEC 60870-5-104 multi",
+  "cross":true,
+	"version":"5.0.1"
+}
