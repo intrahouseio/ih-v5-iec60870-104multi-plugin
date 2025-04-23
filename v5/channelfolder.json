@@ -120,6 +120,7 @@
       "title": "$paramT3",
       "type": "input",
       "default": "20"
-    }
-  ] 
+    },
+    { "prop": "timesync", "title": "$timesync", "type": "cb", "hide":"data.p1.foldertype != 'node'", "default": false } 
+  ]
 }

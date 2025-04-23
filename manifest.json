@@ -7,7 +7,7 @@
   "hasTryStartState":1,
   "linkChstatus":1,
 
-  "share_node_folder_fields":["nodeip", "nodeport", "asduAddress", "use_redundancy", "host_redundancy", "k", "w", "t0", "t1", "t2", "t3", "tzondevice"],
+  "share_node_folder_fields":["nodeip", "nodeport", "asduAddress", "use_redundancy", "host_redundancy", "k", "w", "t0", "t1", "t2", "t3", "tzondevice", "timesync"],
 
   "channel_popup": {
     "add": [
@@ -45,7 +45,8 @@
     "t1":15,
     "t2":10,
     "t3":20,
-    "tzondevice":"+3"
+    "tzondevice":"+3",
+    "timesync": false
   },
 
   "default_channel_read": {

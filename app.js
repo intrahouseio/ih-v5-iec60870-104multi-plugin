@@ -11,16 +11,37 @@ module.exports = async function (plugin) {
   let channelsObj = {};
   let channels = await plugin.channels.get();
   const params = plugin.params.data;
+
   //plugin.log('Received channels data: ' + util.inspect(channels), 2);
   channelsObj = groupByTwoMap(channels, 'nodeip', 'nodeport');
   //plugin.log('Received channels data: ' + util.inspect(channelsObj, null, 4), 2);
+  function sendTimeSync() {
+    for (let key in channelsObj) {
+      if (channelsObj[key].timesync) {
+        if (clients[key].GetStatus().connected) {
+          channelsObj[key].asduArray.forEach(asdu => {
+            clients[key].sendCommands([{ typeId: 103, asdu, ioa: 0, value: Date.now() }]);
+          })          
+        }
+      };
+    }
+    setTimeout(sendTimeSync, params.timesynctimer * 60000 || 1800000); 
+  }
+
+    // Начать выполнение
+  setTimeout(sendTimeSync, params.timesynctimer * 60000 || 1800000);
+
   Object.keys(channelsObj).forEach(key => {
     clients[key] = new IEC104Client((event, data) => {
       plugin.log(`Server ${key} Event: ${event}, Data: ${util.inspect(data)}`, 2);
-      if (event == 'conn' && data.event === 'opened') clients[key].sendStartDT();
+      if (event == 'conn' && data.event === 'opened') {
+        clients[data.clientID].sendStartDT();
+      }
       if (event == 'conn' && data.event === 'activated') {
-        const success = clients[key].sendCommands([{ typeId: 100, ioa: 0, value: 20 }]);
-        plugin.log("success " + success);
+        channelsObj[data.clientID].asduArray.forEach(asdu => {
+          const success = clients[data.clientID].sendCommands([{ typeId: 100, asdu, ioa: 0, value: 20 }]);
+          plugin.log(success ? "Interogation Command Success" : "Interogation Command Failed" + " ASDU " + asdu, 2);
+        })        
       }
       if (event == 'data') {
         let sendArr = [];
@@ -137,57 +158,65 @@ module.exports = async function (plugin) {
     const map = new Map();
 
     array.forEach(item => {
-      const primaryKey = `${item[key1]}_${item[key2]}`; // Формируем ключ как "nodeip_nodeport"
-      const asdu = item.asduGroup ? item.asduGroupAddress : item.asduAddress;
-      const secondaryKey = asdu + "_" + item.objAdr  // Используем asdu + objAdr как второй уровень
-      if (!map.has(primaryKey)) {
-        // Инициализируем объект с дополнительными свойствами
-        map.set(primaryKey, {
-          nodeip: item[key1],
-          nodeport: item[key2],
-          asduAddress: asdu,
-          use_redundancy: item.use_redundancy,
-          host_redundancy: item.host_redundancy,
-          k: item.k,
-          w: item.w,
-          t0: item.t0,
-          t1: item.t1,
-          t2: item.t2,
-          t3: item.t3,
-          objects: new Map() // Для хранения объектов второго уровня
-        });
-      }
+        const primaryKey = `${item[key1]}_${item[key2]}`; // Формируем ключ как "nodeip_nodeport"
+        const asdu = item.asduGroup ? item.asduGroupAddress : item.asduAddress;
+        const secondaryKey = asdu + "_" + item.objAdr; // Используем asdu + objAdr как второй уровень
 
-      const group = map.get(primaryKey);
+        if (!map.has(primaryKey)) {
+            // Инициализируем объект с дополнительными свойствами и массивом asduArray
+            map.set(primaryKey, {
+                nodeip: item[key1],
+                nodeport: item[key2],
+                asduAddress: asdu,
+                use_redundancy: item.use_redundancy,
+                host_redundancy: item.host_redundancy,
+                timesync: item.timesync,
+                k: item.k,
+                w: item.w,
+                t0: item.t0,
+                t1: item.t1,
+                t2: item.t2,
+                t3: item.t3,
+                asduArray: new Set(), // Используем Set для уникальных значений asdu
+                objects: new Map() // Для хранения объектов второго уровня
+            });
+        }
 
-      if (!group.objects.has(secondaryKey)) {
-        group.objects.set(secondaryKey, []);
-      }
+        const group = map.get(primaryKey);
 
-      group.objects.get(secondaryKey).push(item);
+        // Добавляем asdu в asduArray (Set автоматически обеспечивает уникальность)
+        group.asduArray.add(asdu);
+
+        if (!group.objects.has(secondaryKey)) {
+            group.objects.set(secondaryKey, []);
+        }
+
+        group.objects.get(secondaryKey).push(item);
     });
 
     // Преобразование Map в объект
     return Object.fromEntries(
-      Array.from(map.entries()).map(([k1, v1]) => [
-        k1,
-        {
-          nodeip: v1.nodeip,
-          nodeport: v1.nodeport,
-          asduAddress: v1.asdu,
-          use_redundancy: v1.use_redundancy,
-          host_redundancy: v1.host_redundancy,
-          k: v1.k,
-          w: v1.w,
-          t0: v1.t0,
-          t1: v1.t1,
-          t2: v1.t2,
-          t3: v1.t3,
-          objects: Object.fromEntries(v1.objects)
-        }
-      ])
+        Array.from(map.entries()).map(([k1, v1]) => [
+            k1,
+            {
+                nodeip: v1.nodeip,
+                nodeport: v1.nodeport,
+                asduAddress: v1.asduAddress,
+                use_redundancy: v1.use_redundancy,
+                host_redundancy: v1.host_redundancy,
+                timesync: v1.timesync,
+                k: v1.k,
+                w: v1.w,
+                t0: v1.t0,
+                t1: v1.t1,
+                t2: v1.t2,
+                t3: v1.t3,
+                asduArray: Array.from(v1.asduArray), // Преобразуем Set в массив
+                objects: Object.fromEntries(v1.objects)
+            }
+        ])
     );
-  };
+}
 
 };
 

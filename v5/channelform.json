@@ -8,7 +8,7 @@
 
   "p3": [
     { "prop": "chan", "title": "Channel", "type": "input" },
-    { "prop": "objAdr", "title": "Object Address", "type": "number" },
+    { "prop": "objAdr", "title": "$objAdr", "type": "number" },
     { "prop": "asduGroup", "title": "$asduGroup", "type" : "cb", "default": false},
     { "prop": "asduGroupAddress", "title": "$asduGroupAddress", "type": "number","hide": "!data.p3.asduGroup", "default": 1 },
     { "prop": "title", "title": "$Name", "type": "input" },
@@ -16,7 +16,7 @@
     { "prop": "w", "title": "Запись", "type": "cb", "hide": "1==1" },
     {
       "prop": "ioObjMtype",
-      "title": "Information Object",
+      "title": "$ioObjMtype",
       "type": "droplist",
       "hide": "!data.p3.r",
       "data": [
@@ -98,7 +98,7 @@
     { "prop": "devpropname", "title": "$Devpropname", "type": "input" },
     {
       "prop": "ioObjCtype",
-      "title": "Control Object",
+      "title": "$ioObjCtype",
       "type": "droplist",
       "hide": "!data.p3.w",
       "data": [

@@ -17,6 +17,12 @@
       "title": "$originatorAddress",
       "type": "number",
       "default": 1
+    },
+    {
+      "prop": "timesynctimer",
+      "title": "$timesynctimer",
+      "type": "number",
+      "default": 30
     }
   ],
 
