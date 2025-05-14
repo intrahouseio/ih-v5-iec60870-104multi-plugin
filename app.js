@@ -39,7 +39,7 @@ module.exports = async function (plugin) {
       }
       if (event == 'conn' && data.event === 'activated') {
         channelsObj[data.clientID].asduArray.forEach(asdu => {
-          const success = clients[data.clientID].sendCommands([{ typeId: 100, asdu, ioa: 0, value: 20 }]);
+          const success = clients[data.clientID].sendCommands([{ typeId: 100, asdu: Number(asdu), ioa: 0, value: 20 }]);
           plugin.log(success ? "Interogation Command Success" : "Interogation Command Failed" + " ASDU " + asdu, 2);
         })
       }
@@ -113,9 +113,9 @@ module.exports = async function (plugin) {
           } else {
             val = item.value;
           }
-          writeArr.push({ typeId: Number(item.ioObjCtype), ioa: item.objAdr, asdu: item.asduAddress, value: val, bselCmd: item.selCmd, ql: Number(item.ql) });
+          writeArr.push({ typeId: Number(item.ioObjCtype), ioa: Number(item.objAdr), asdu: Number(item.asduAddress), value: val, bselCmd: Number(item.selCmd), ql: Number(item.ql) });
           if (item.selCmd) {
-            writeArr.push({ typeId: Number(item.ioObjCtype), ioa: item.objAdr, asdu: item.asduAddress, value: val, bselCmd: 0, ql: Number(item.ql) });
+            writeArr.push({ typeId: Number(item.ioObjCtype), ioa: Number(item.objAdr), asdu: Number(item.asduAddress), value: val, bselCmd: 0, ql: Number(item.ql) });
           }
         })
       })
