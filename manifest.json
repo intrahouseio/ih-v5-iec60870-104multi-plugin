@@ -25,7 +25,7 @@
       { "id": "channel_folder", "title": "$NewFolder" },
       { "id": "channel_node_folder", "title": "$NewNode" },
       { "id": "channel_read", "title": "$ChannelRead" },  
-      { "id": "channel_write", "title": "$ChannelWrite" }    
+      { "id": "channel_write", "title": "$ChannelWrite" }
     ],
     "browse":{"variant":"subtree"},
     "copypaste": true,
@@ -46,7 +46,14 @@
     "t2":10,
     "t3":20,
     "tzondevice":"+3",
-    "timesync": false
+    "timesync": false,
+    "channels": [  
+      {
+        "r": 1,
+        "title": "Connection Status",
+        "syschan": 1
+      }
+    ]
   },
 
   "default_channel_read": {
@@ -57,7 +64,8 @@
     "ioObjMtype": "1",
     "objAdr": 1,
     "asduGroup": false,
-    "asduGroupAddress": 1
+    "asduGroupAddress": 1,
+    "syschan": 0
   },
 
   "default_channel_write": {
@@ -68,6 +76,12 @@
     "ql": "0",
     "objAdr": 1,
     "asduGroup": false,
-    "asduGroupAddress": 1
+    "asduGroupAddress": 1,
+    "syschan": 0
+  },
+  "default_channel_sys": {
+    "r": 1,
+    "title": "Connection Status",
+    "syschan": 1
   }
 }

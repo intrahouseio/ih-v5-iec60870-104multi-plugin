@@ -7,18 +7,19 @@
   "spacing": 4,
 
   "p3": [
-    { "prop": "chan", "title": "Channel", "type": "input" },
-    { "prop": "objAdr", "title": "$objAdr", "type": "number" },
-    { "prop": "asduGroup", "title": "$asduGroup", "type" : "cb", "default": false},
-    { "prop": "asduGroupAddress", "title": "$asduGroupAddress", "type": "number","hide": "!data.p3.asduGroup", "default": 1 },
+    { "prop": "chan", "title": "Channel", "type": "input", "hide" : "data.p3.syschan" },
+    { "prop": "objAdr", "title": "$objAdr", "type": "number", "hide" : "data.p3.syschan" },
+    { "prop": "asduGroup", "title": "$asduGroup", "type" : "cb", "default": false, "hide": "data.p3.syschan"},
+    { "prop": "asduGroupAddress", "title": "$asduGroupAddress", "type": "number","hide": "!data.p3.asduGroup || data.p3.syschan", "default": 1 },
     { "prop": "title", "title": "$Name", "type": "input" },
     { "prop": "r", "title": "Чтение", "type": "cb", "hide": "1==1" },
     { "prop": "w", "title": "Запись", "type": "cb", "hide": "1==1" },
+    { "prop": "syschan", "title": "Системный индикатор", "type": "cb"},
     {
       "prop": "ioObjMtype",
       "title": "$ioObjMtype",
       "type": "droplist",
-      "hide": "!data.p3.r",
+      "hide": "!data.p3.r || data.p3.syschan",
       "data": [
         {
           "id": "1",
@@ -86,15 +87,15 @@
         }
       ]
     },
-    { "prop": "bit", "title": "$bit", "type": "cb", "hide": "!data.p3.r" },
+    { "prop": "bit", "title": "$bit", "type": "cb", "hide": "!data.p3.r || data.p3.syschan" },
     {
       "prop": "offset",
       "title": "$offset",
       "type": "number",
-      "hide": "!data.p3.r || !data.p3.bit",
+      "hide": "!data.p3.r || !data.p3.bit || data.p3.syschan",
       "default": 0
     },
-    { "prop": "calc", "title": "$Devhard_Calc", "type": "input", "hide": "!data.p3.r" },
+    { "prop": "calc", "title": "$Devhard_Calc", "type": "input", "hide": "!data.p3.r || data.p3.syschan" },
     { "prop": "devpropname", "title": "$Devpropname", "type": "input" },
     {
       "prop": "ioObjCtype",
@@ -177,7 +178,7 @@
       ]
     },
 
-    { "prop": "selCmd", "title": "Selected Command", "type": "cb", "hide": "!data.p3.w" },
+    { "prop": "selCmd", "title": "Selected Command", "type": "cb", "hide": "!data.p3.w"  },
     {
       "prop": "ql",
       "title": "Qualifier of command",

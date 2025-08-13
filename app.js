@@ -36,6 +36,7 @@ module.exports = async function (plugin) {
     clients[key] = new IEC104Client((event, data) => {
       plugin.log(`Server ${key} Event: ${event}, Data: ${util.inspect(data)}`, 2);
       if (event == 'conn' && data.event === 'opened') {
+        plugin.sendData([{id:channelsObj[data.clientID].connectionStatusId, value: 1}]);
         clients[data.clientID].sendStartDT();
         // Start periodic check for activation
         activationCheckIntervals[data.clientID] = setInterval(() => {
@@ -55,6 +56,7 @@ module.exports = async function (plugin) {
         });
       }
       if (event == 'conn' && data.event === 'closed') {
+        plugin.sendData([{id:channelsObj[data.clientID].connectionStatusId, value: 0}]);
         activationStatus[data.clientID] = false; // Reset activation status on disconnect
         clearInterval(activationCheckIntervals[data.clientID]); // Stop periodic checks
       }
@@ -78,6 +80,7 @@ module.exports = async function (plugin) {
               }
               obj.id = addr.id;
               obj.chstatus = item.quality;
+              obj.quality = item.quality;
               obj.title = addr.title;
               obj.parentname = addr.parentname;
               sendArr.push(obj);
@@ -174,63 +177,77 @@ module.exports = async function (plugin) {
     }
   });
 
-  function groupByTwoMap(array, key1, key2) {
+ function groupByTwoMap(array, key1, key2) {
     const map = new Map();
 
     array.forEach(item => {
-      const primaryKey = `${item[key1]}_${item[key2]}`; // Формируем ключ как "nodeip_nodeport"
-      const asdu = item.asduGroup ? item.asduGroupAddress : item.asduAddress;
-      const secondaryKey = asdu + "_" + item.objAdr; // Используем asdu + objAdr как второй уровень
+        // Формируем первичный ключ как "nodeip_nodeport"
+        const primaryKey = `${item[key1] ?? 'unknown'}_${item[key2] ?? 'unknown'}`;
+        const asdu = item.asduGroup ? item.asduGroupAddress : item.asduAddress;
+        const secondaryKey = asdu + "_" + item.objAdr; // Вторичный ключ: asdu + objAdr
 
-      if (!map.has(primaryKey)) {
-        map.set(primaryKey, {
-          nodeip: item[key1],
-          nodeport: item[key2],
-          parentnodefolder: item.parentnodefolder,
-          asduAddress: asdu,
-          use_redundancy: item.use_redundancy,
-          host_redundancy: item.host_redundancy,
-          timesync: item.timesync,
-          k: item.k,
-          w: item.w,
-          t0: item.t0,
-          t1: item.t1,
-          t2: item.t2,
-          t3: item.t3,
-          asduArray: new Set(),
-          objects: new Map()
-        });
-      }
+        // Если primaryKey еще не существует, создаем новую запись
+        if (!map.has(primaryKey)) {
+            map.set(primaryKey, {
+                nodeip: item[key1],
+                nodeport: item[key2],
+                parentnodefolder: item.parentnodefolder,
+                asduAddress: asdu,
+                use_redundancy: item.use_redundancy,
+                host_redundancy: item.host_redundancy,
+                timesync: item.timesync,
+                k: item.k,
+                w: item.w,
+                t0: item.t0,
+                t1: item.t1,
+                t2: item.t2,
+                t3: item.t3,
+                connectionStatusId: item.syschan ? item.id : "", // Устанавливаем id, если syschan: true
+                asduArray: new Set(),
+                objects: new Map()
+            });
+        } else if (item.syschan) {
+            // Если syschan: true, обновляем connectionStatusId, если оно еще не установлено или пустое
+            const group = map.get(primaryKey);
+            if (!group.connectionStatusId && item.id) {
+                group.connectionStatusId = item.id;
+            }
+        }
 
-      const group = map.get(primaryKey);
-      group.asduArray.add(asdu);
-      if (!group.objects.has(secondaryKey)) {
-        group.objects.set(secondaryKey, []);
-      }
-      group.objects.get(secondaryKey).push(item);
+        // Добавляем данные в asduArray и objects только для элементов с syschan: false
+        if (!item.syschan) {
+            const group = map.get(primaryKey);
+            group.asduArray.add(asdu);
+            if (!group.objects.has(secondaryKey)) {
+                group.objects.set(secondaryKey, []);
+            }
+            group.objects.get(secondaryKey).push(item);
+        }
     });
 
+    // Преобразуем Map в объект
     return Object.fromEntries(
-      Array.from(map.entries()).map(([k1, v1]) => [
-        k1,
-        {
-          nodeip: v1.nodeip,
-          nodeport: v1.nodeport,
-          parentnodefolder: v1.parentnodefolder,
-          asduAddress: v1.asduAddress,
-          use_redundancy: v1.use_redundancy,
-          host_redundancy: v1.host_redundancy,
-          timesync: v1.timesync,
-          k: v1.k,
-          w: v1.w,
-          t0: v1.t0,
-          t1: v1.t1,
-          t2: v1.t2,
-          t3: v1.t3,
-          asduArray: Array.from(v1.asduArray),
-          objects: Object.fromEntries(v1.objects)
-        }
-      ])
+        Array.from(map.entries()).map(([k1, v1]) => [
+            k1,
+            {
+                nodeip: v1.nodeip,
+                nodeport: v1.nodeport,
+                parentnodefolder: v1.parentnodefolder,
+                asduAddress: v1.asduAddress,
+                use_redundancy: v1.use_redundancy,
+                host_redundancy: v1.host_redundancy,
+                timesync: v1.timesync,
+                k: v1.k,
+                w: v1.w,
+                t0: v1.t0,
+                t1: v1.t1,
+                t2: v1.t2,
+                t3: v1.t3,
+                connectionStatusId: v1.connectionStatusId,
+                asduArray: Array.from(v1.asduArray),
+                objects: Object.fromEntries(v1.objects)
+            }
+        ])
     );
-  }
+}
 };
