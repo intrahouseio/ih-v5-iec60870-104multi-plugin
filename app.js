@@ -12,9 +12,9 @@ module.exports = async function (plugin) {
   const activationStatus = {}; // Track activation status for each client
   const activationCheckIntervals = {}; // Store intervals for periodic checks
 
-  plugin.log('Received channels data: ' + util.inspect(channels), 2);
+  //plugin.log('Received channels data: ' + util.inspect(channels), 2);
   channelsObj = groupByTwoMap(channels, 'nodeip', 'nodeport');
-  plugin.log('Received channels data: ' + util.inspect(channelsObj, null, 4), 2);
+  //plugin.log('Received channels data: ' + util.inspect(channelsObj, null, 4), 2);
 
   function sendTimeSync() {
     for (let key in channelsObj) {
@@ -31,13 +31,17 @@ module.exports = async function (plugin) {
 
   setTimeout(sendTimeSync, params.timesynctimer * 60000 || 1800000);
 
-  Object.keys(channelsObj).forEach(key => {
+  const channelsObjArr = Object.keys(channelsObj);
+  for (let i=0; i<channelsObjArr.length; i++) {
+    const key = channelsObjArr[i]; 
     activationStatus[key] = false; // Initialize activation status as false
     clients[key] = new IEC104Client((event, data) => {
       plugin.log(`Server ${key} Event: ${event}, Data: ${util.inspect(data)}`, 2);
       if (event == 'conn' && data.event === 'opened') {
-        plugin.sendData([{id:channelsObj[data.clientID].connectionStatusId, value: 1}]);
-        clients[data.clientID].sendStartDT();
+        if (channelsObj[data.clientID].connectionStatusId) plugin.sendData([{id:channelsObj[data.clientID].connectionStatusId, value: 1}]);
+ 
+        //clients[data.clientID].sendStartDT();
+
         // Start periodic check for activation
         activationCheckIntervals[data.clientID] = setInterval(() => {
           const status = clients[data.clientID].getStatus();
@@ -45,7 +49,7 @@ module.exports = async function (plugin) {
             plugin.log(`Retrying sendStartDT for client ${data.clientID}`, 2);
             clients[data.clientID].sendStartDT();
           }
-        }, 10000); // Retry every 10 seconds
+        }, 5000); // Retry every 5 seconds
       }
       if (event == 'conn' && data.event === 'activated') {
         activationStatus[data.clientID] = true; // Mark client as activated
@@ -56,7 +60,7 @@ module.exports = async function (plugin) {
         });
       }
       if (event == 'conn' && data.event === 'closed') {
-        plugin.sendData([{id:channelsObj[data.clientID].connectionStatusId, value: 0}]);
+        if (channelsObj[data.clientID].connectionStatusId) plugin.sendData([{id:channelsObj[data.clientID].connectionStatusId, value: 0}]);
         activationStatus[data.clientID] = false; // Reset activation status on disconnect
         clearInterval(activationCheckIntervals[data.clientID]); // Stop periodic checks
       }
@@ -109,7 +113,8 @@ module.exports = async function (plugin) {
     } catch (e) {
       plugin.log("Connection create error " + util.inspect(e), 1);
     }
-  });
+    await sleep(1000);
+  };
 
   plugin.onAct(async (message) => {
     plugin.log('ACT data=' + util.inspect(message.data), 1);
@@ -140,7 +145,7 @@ module.exports = async function (plugin) {
         }
         writeArr = [];
       } catch (e) {
-        plugin.log("Write error: " + util.inspect(e));
+        plugin.log("Write error: " + util.inspect(e),2);
       }
     });
   });

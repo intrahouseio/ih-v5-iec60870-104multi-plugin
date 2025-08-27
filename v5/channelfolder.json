@@ -10,7 +10,7 @@
     { "prop": "foldertype", "title": "", "type": "text", "hide":"1==1" },
     { "prop": "nodeip", "title": "$nodeip", "type": "input", "hide":"data.p1.foldertype != 'node'" },
     { "prop": "nodeport", "title": "$nodeport", "type": "input", "hide":"data.p1.foldertype != 'node'" },
-    { "prop": "use_redundancy", "title": "$use_redundancy", "type": "cb", "hide":"data.p1.foldertype != 'node'", "default": false },
+    { "prop": "use_redundancy", "title": "$use_redundancy", "type": "cb", "hide":"data.p1.foldertype != 'node'", "default": 0},
     { "prop": "host_redundancy", "title": "$host_redundancy", "type": "input", "hide":"data.p1.foldertype != 'node' || !data.p1.use_redundancy", "defaule": "192.168.0.125" },
     {
       "prop": "asduAddress",
@@ -121,6 +121,6 @@
       "type": "input",
       "default": "20"
     },
-    { "prop": "timesync", "title": "$timesync", "type": "cb", "hide":"data.p1.foldertype != 'node'", "default": false } 
+    { "prop": "timesync", "title": "$timesync", "type": "cb", "hide":"data.p1.foldertype != 'node'", "default": 0} 
   ]
 }

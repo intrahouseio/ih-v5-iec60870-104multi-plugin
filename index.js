@@ -16,7 +16,7 @@ const app = require('./app');
 
     plugin.params.data = await plugin.params.get();
     plugin.logger.setParams(plugin.params.data);
-    plugin.log('Received params data:'+util.inspect(plugin.params.data));
+    //plugin.log('Received params data:'+util.inspect(plugin.params.data));
 
     // Получить каналы 
     //plugin.channels.data = await plugin.channels.get();

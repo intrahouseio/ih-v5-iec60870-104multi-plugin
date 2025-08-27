@@ -37,7 +37,7 @@
     "nodeip": "192.168.0.245",
     "nodeport": 2404,
     "asduAddress": 1,
-    "use_redundancy": false,
+    "use_redundancy": 0,
     "host_redundancy": "192.168.0.125",
     "k": 12,
     "w": 8,
@@ -46,7 +46,7 @@
     "t2":10,
     "t3":20,
     "tzondevice":"+3",
-    "timesync": false,
+    "timesync": 0,
     "channels": [  
       {
         "r": 1,
