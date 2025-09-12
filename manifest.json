@@ -69,12 +69,17 @@
   },
 
   "default_channel_write": {
+    "r": 1,
     "w": 1,
+    "bit": 0,
+    "offset": 0,
+    "ioObjMtype": "1",
     "title": "Command Object 1",
     "ioObjCtype": "45",
     "selCmd": false,
     "ql": "0",
     "objAdr": 1,
+    "cmdAdr": 1,
     "asduGroup": false,
     "asduGroupAddress": 1,
     "syschan": 0

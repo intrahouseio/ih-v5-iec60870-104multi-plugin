@@ -109,6 +109,7 @@
     },
     { "prop": "calc", "title": "$Devhard_Calc", "type": "input", "hide": "!data.p3.r || data.p3.syschan" },
     { "prop": "devpropname", "title": "$Devpropname", "type": "input" },
+    { "prop": "cmdAdr", "title": "$cmdAdr", "type": "number", "hide" : "!data.p3.w" },
     {
       "prop": "ioObjCtype",
       "title": "$ioObjCtype",
