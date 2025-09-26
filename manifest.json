@@ -13,8 +13,7 @@
     "add": [
       { "id": "channel_folder", "title": "$NewFolder" },
       { "id": "channel_node_folder", "title": "$NewNode" },
-      { "id": "channel_read", "title": "$ChannelRead" },
-      { "id": "channel_write", "title": "$ChannelWrite" }
+      { "id": "channel", "title": "$ChannelRead" }
     ],
     "copypaste": true,
     "delete": true
@@ -24,8 +23,7 @@
     "add": [
       { "id": "channel_folder", "title": "$NewFolder" },
       { "id": "channel_node_folder", "title": "$NewNode" },
-      { "id": "channel_read", "title": "$ChannelRead" },  
-      { "id": "channel_write", "title": "$ChannelWrite" }
+      { "id": "channel", "title": "$NewChannel" }
     ],
     "browse":{"variant":"subtree"},
     "copypaste": true,
@@ -56,25 +54,14 @@
     ]
   },
 
-  "default_channel_read": {
-    "r": 1,
-    "title": "Control Object 1",
-    "bit": 0,
-    "offset": 0,
-    "ioObjMtype": "1",
-    "objAdr": 1,
-    "asduGroup": false,
-    "asduGroupAddress": 1,
-    "syschan": 0
-  },
 
-  "default_channel_write": {
+  "default_channel": {
     "r": 1,
-    "w": 1,
+    "w": 0,
     "bit": 0,
     "offset": 0,
     "ioObjMtype": "1",
-    "title": "Command Object 1",
+    "title": "Channel 1",
     "ioObjCtype": "45",
     "selCmd": false,
     "ql": "0",

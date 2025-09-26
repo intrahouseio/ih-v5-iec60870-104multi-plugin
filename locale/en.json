@@ -78,5 +78,12 @@
     "laststop" : "Stop time",
     "uptime" : "Uptime",
     "error" : "Error",
-    "ChannelSys": "Connection status"
+    "ChannelSys": "Connection status",
+    "selCmd": "Selected Command",
+    "ql": "Qualifier of command",
+    "ql0": "No additional definition",
+    "ql1": "Short pulse",
+    "ql2": "Long pulse",
+    "ql3": "Persistent output"
+
 }
