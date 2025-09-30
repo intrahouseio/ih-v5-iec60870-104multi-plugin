@@ -25,59 +25,59 @@
       "type": "droplist",
       "data": [
         {
-          "id": "+10",
-          "title": "+10"
+          "id": "UTC+10",
+          "title": "UTC+10"
         },
         {
-          "id": "+9",
-          "title": "+9"
+          "id": "UTC+9",
+          "title": "UTC+9"
         },
         {
-          "id": "+8",
-          "title": "+8"
+          "id": "UTC+8",
+          "title": "UTC+8"
         },
         {
-          "id": "+7",
-          "title": "+7"
+          "id": "UTC+7",
+          "title": "UTC+7"
         },
         {
-          "id": "+6",
-          "title": "+6"
+          "id": "UTC+6",
+          "title": "UTC+6"
         },
         {
-          "id": "+5",
-          "title": "+5"
+          "id": "UTC+5",
+          "title": "UTC+5"
         },
         {
-          "id": "+4",
-          "title": "+4"
+          "id": "UTC+4",
+          "title": "UTC+4"
         },
         {
-          "id": "+3",
-          "title": "+3"
+          "id": "UTC+3",
+          "title": "UTC+3"
         },
         {
-          "id": "+2",
-          "title": "+2"
+          "id": "UTC+2",
+          "title": "UTC+2"
         },
         {
-          "id": "+1",
-          "title": "+1"
+          "id": "UTC+1",
+          "title": "UTC+1"
         },
         {
-          "id": "0",
-          "title": "0"
+          "id": "UTC0",
+          "title": "UTC0"
         },
         {
-          "id": "-1",
-          "title": "-1"
+          "id": "UTC-1",
+          "title": "UTC-1"
         },
         {
-          "id": "-2",
-          "title": "-2"
+          "id": "UTC-2",
+          "title": "UTC-2"
         }          
       ],
-      "default": "+3",
+      "default": "UTC+3",
       "hide":"data.p1.foldertype != 'node'"
     },
     { "prop": "txt", "title": "$Comment", "type": "textarea" }
@@ -86,37 +86,37 @@
   "p2": [
    
     {
-      "prop": "k",
+      "prop": "paramk",
       "title": "$paramK",
       "type": "input",
       "default": "12"
     },
     {
-      "prop": "w",
+      "prop": "paramw",
       "title": "$paramW",
       "type": "input",
       "default": "8"
     },
     {
-      "prop": "t0",
+      "prop": "paramt0",
       "title": "$paramT0",
       "type": "input",
       "default": "30"
     },
     {
-      "prop": "t1",
+      "prop": "paramt1",
       "title": "$paramT1",
       "type": "input",
       "default": "15"
     },
     {
-      "prop": "t2",
+      "prop": "paramt2",
       "title": "$paramT2",
       "type": "input",
       "default": "10"
     },
     {
-      "prop": "t3",
+      "prop": "paramt3",
       "title": "$paramT3",
       "type": "input",
       "default": "20"

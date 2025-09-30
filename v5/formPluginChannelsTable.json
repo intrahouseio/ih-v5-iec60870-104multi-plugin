@@ -11,8 +11,6 @@
       "prop": "unitchannelsTable",
       "popupenable":false,
       "columns": [
-     
-        { "prop": "chan", "title": "$chan",  "type": "link", "command":"forward",  "width": 150, "filter": true },
         { "prop": "r", "title": "$Read",  "type": "cb", "width": 100, "filter": true },
         { "prop": "objAdr","title": "$objAdr","type": "input", "hide":"!data.r", "width": 150, "filter": true},
         { "prop": "title", "title": "$title",  "type": "text", "hide":"!data.r", "width": 150, "filter": true },

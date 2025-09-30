@@ -7,7 +7,7 @@
   "hasTryStartState":1,
   "linkChstatus":1,
 
-  "share_node_folder_fields":["nodeip", "nodeport", "asduAddress", "use_redundancy", "host_redundancy", "k", "w", "t0", "t1", "t2", "t3", "tzondevice", "timesync"],
+  "share_node_folder_fields":["nodeip", "nodeport", "asduAddress", "use_redundancy", "host_redundancy", "paramk", "paramw", "paramt0", "paramt1", "paramt2", "paramt3", "tzondevice", "timesync"],
 
   "channel_popup": {
     "add": [
@@ -37,13 +37,13 @@
     "asduAddress": 1,
     "use_redundancy": 0,
     "host_redundancy": "192.168.0.125",
-    "k": 12,
-    "w": 8,
-    "t0":30,
-    "t1":15,
-    "t2":10,
-    "t3":20,
-    "tzondevice":"+3",
+    "paramk": 12,
+    "paramw": 8,
+    "paramt0":30,
+    "paramt1":15,
+    "paramt2":10,
+    "paramt3":20,
+    "tzondevice":"UTC+3",
     "timesync": 0,
     "channels": [  
       {

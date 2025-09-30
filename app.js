@@ -82,7 +82,8 @@ module.exports = async function (plugin) {
                   obj.value = item.val;
                 }
                 if (item.timestamp != undefined) {
-                  obj.ts = item.timestamp + Number(addr.tzondevice) * (-3600000);
+                  if (!addr.tzondevice.startsWith("UTC")) addr.tzondevice = "UTC" + addr.tzondevice;
+                  obj.ts = item.timestamp + Number(addr.tzondevice.slice(3)) * (-3600000);
                 } else {
                   obj.ts = Date.now();
                 }
@@ -211,12 +212,12 @@ module.exports = async function (plugin) {
           use_redundancy: item.use_redundancy,
           host_redundancy: item.host_redundancy,
           timesync: item.timesync,
-          k: item.k,
-          w: item.w,
-          t0: item.t0,
-          t1: item.t1,
-          t2: item.t2,
-          t3: item.t3,
+          k: item.paramk || 12,
+          w: item.paramw || 8,
+          t0: item.paramt0 || 30,
+          t1: item.paramt1 || 15,
+          t2: item.paramt2 || 10,
+          t3: item.paramt3 || 20,
           connectionStatusId: item.syschan ? item.id : "", // Устанавливаем id, если syschan: true
           asduArray: new Set(),
           objects: new Map()
@@ -252,12 +253,12 @@ module.exports = async function (plugin) {
           use_redundancy: v1.use_redundancy,
           host_redundancy: v1.host_redundancy,
           timesync: v1.timesync,
-          k: v1.k,
-          w: v1.w,
-          t0: v1.t0,
-          t1: v1.t1,
-          t2: v1.t2,
-          t3: v1.t3,
+          k: v1.paramk || 12,
+          w: v1.paramw || 8,
+          t0: v1.paramt0 || 30,
+          t1: v1.paramt1 || 15,
+          t2: v1.paramt2 || 10,
+          t3: v1.paramt3 || 20,
           connectionStatusId: v1.connectionStatusId,
           asduArray: Array.from(v1.asduArray),
           objects: Object.fromEntries(v1.objects)
