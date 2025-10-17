@@ -23,6 +23,12 @@
       "title": "$timesynctimer",
       "type": "number",
       "default": 30
+    },
+    {
+      "prop": "buffertime",
+      "title": "Buffer time, ms",
+      "type": "number",
+      "default": 500
     }
   ],
 

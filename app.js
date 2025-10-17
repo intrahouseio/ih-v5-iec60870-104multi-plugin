@@ -6,6 +6,8 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 module.exports = async function (plugin) {
   let clients = {};
   let channelsObj = {};
+  let T1;
+  let sendArr = [];
   let channels = await plugin.channels.get();
   const params = plugin.params.data;
   const scanner = new Scanner(plugin);
@@ -30,6 +32,17 @@ module.exports = async function (plugin) {
   }
 
   timeSyncTimer = setTimeout(sendTimeSync, params.timesynctimer * 60000 || 1800000);
+
+  sendNext();
+
+  function sendNext() {
+    if (sendArr.length > 0) {
+      plugin.sendData(sendArr);
+      sendArr = [];
+    }
+    T1 = setTimeout(sendNext, params.buffertime || 500);
+  }
+
 
   const channelsObjArr = Object.keys(channelsObj);
   for (let i = 0; i < channelsObjArr.length; i++) {
@@ -67,7 +80,6 @@ module.exports = async function (plugin) {
         clearInterval(activationCheckIntervals[data.clientID]); // Stop periodic checks
       }
       if (event == 'data') {
-        let sendArr = [];
         data.forEach(item => {
           if (scanner.status > 0 && scanner.clientID == item.clientID) scanner.sendData(item);
           const clientData = channelsObj[item.clientID];
@@ -98,7 +110,7 @@ module.exports = async function (plugin) {
           }
 
         });
-        if (sendArr.length > 0) plugin.sendData(sendArr);
+        //if (sendArr.length > 0) plugin.sendData(sendArr);
       }
     });
     try {
