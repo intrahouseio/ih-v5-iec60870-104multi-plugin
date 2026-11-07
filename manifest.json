@@ -45,6 +45,7 @@
     "paramt3":20,
     "tzondevice":"UTC+3",
     "timesync": 0,
+    "periodpoll": 30,
     "channels": [  
       {
         "r": 1,

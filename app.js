@@ -117,9 +117,10 @@ module.exports = async function (plugin) {
         activationStatus[data.clientID] = true; // Mark client as activated
         clearInterval(activationCheckIntervals[data.clientID]); // Stop periodic checks
         channelsObj[data.clientID].asduArray.forEach(asdu => {
-          const success = clients[data.clientID].sendCommands([{ typeId: 100, asdu: Number(asdu), ioa: 0, value: 20 }]);
-          plugin.log(success ? "Interogation Command Success" : "Interogation Command Failed" + " ASDU " + asdu, 2);
-             
+          if (channelsObj[data.clientID].periodpoll == 0) {
+            const success = clients[data.clientID].sendCommands([{ typeId: 100, asdu: Number(asdu), ioa: 0, value: 20 }]);
+            plugin.log(success ? "Interogation Command Success" : "Interogation Command Failed" + " ASDU " + asdu, 2);
+          }  
         });
         startPeriodicPoll(data.clientID);
       }
