@@ -13,10 +13,57 @@ module.exports = async function (plugin) {
   const scanner = new Scanner(plugin);
   const activationStatus = {}; // Track activation status for each client
   const activationCheckIntervals = {}; // Store intervals for periodic checks
+  const periodicPollTimers = {}; // периодический опрос по узлам
   let timeSyncTimer;
   //plugin.log('Received channels data: ' + util.inspect(channels), 2);
   channelsObj = groupByTwoMap(channels, 'nodeip', 'nodeport');
   //plugin.log('Received channels data: ' + util.inspect(channelsObj, null, 4), 2);
+
+  function startPeriodicPoll(key) {
+    stopPeriodicPoll(key); // на всякий случай
+  
+    const node = channelsObj[key];
+    if (!node) return;
+  
+    const periodMin = Number(node.periodpoll);
+    if (!periodMin || periodMin <= 0) {
+      plugin.log(`Periodic poll disabled for ${key}`, 2);
+      return;
+    }
+    if (!node.asduArray || node.asduArray.length === 0) return;
+  
+    const periodMs = periodMin * 60 * 1000;
+    plugin.log(`Periodic poll enabled for ${key}: every ${periodMin} min`, 2);
+  
+    periodicPollTimers[key] = setInterval(() => {
+      try {
+        if (!clients[key]) return;
+        const status = clients[key].getStatus();
+        if (!status.connected || !activationStatus[key]) return;
+  
+        node.asduArray.forEach(asdu => {
+          const success = clients[key].sendCommands([{
+            typeId: 100, asdu: Number(asdu), ioa: 0, value: 20
+          }]);
+          plugin.log(
+            success
+              ? `Periodic interrogation success ASDU ${asdu} (${key})`
+              : `Periodic interrogation failed ASDU ${asdu} (${key})`,
+            2
+          );
+        });
+      } catch (e) {
+        plugin.log(`Periodic poll error for ${key}: ${util.inspect(e)}`, 2);
+      }
+    }, periodMs);
+  }
+  
+  function stopPeriodicPoll(key) {
+    if (periodicPollTimers[key]) {
+      clearInterval(periodicPollTimers[key]);
+      delete periodicPollTimers[key];
+    }
+  }
 
   function sendTimeSync() {
     for (let key in channelsObj) {
@@ -72,12 +119,16 @@ module.exports = async function (plugin) {
         channelsObj[data.clientID].asduArray.forEach(asdu => {
           const success = clients[data.clientID].sendCommands([{ typeId: 100, asdu: Number(asdu), ioa: 0, value: 20 }]);
           plugin.log(success ? "Interogation Command Success" : "Interogation Command Failed" + " ASDU " + asdu, 2);
+             
         });
+        startPeriodicPoll(data.clientID);
       }
       if (event == 'conn' && data.event === 'closed') {
         if (channelsObj[data.clientID].connectionStatusId) plugin.sendData([{ id: channelsObj[data.clientID].connectionStatusId, value: 0 }]);
         activationStatus[data.clientID] = false; // Reset activation status on disconnect
         clearInterval(activationCheckIntervals[data.clientID]); // Stop periodic checks
+
+        stopPeriodicPoll(data.clientID); 
       }
       if (event == 'data') {
         data.forEach(item => {
@@ -172,11 +223,24 @@ module.exports = async function (plugin) {
   plugin.channels.onChange(async () => {
     channels = await plugin.channels.get();
     channelsObj = groupByTwoMap(channels, 'nodeip', 'nodeport');
+  
+    // Пересоздаём таймеры периодического опроса
+    Object.keys(channelsObj).forEach(key => {
+      if (activationStatus[key]) {
+        startPeriodicPoll(key); // внутри сам вызовет stopPeriodicPoll
+      } else {
+        stopPeriodicPoll(key);
+      }
+    });
   });
 
   async function terminate() {
     Object.keys(activationCheckIntervals).forEach(key => {
       clearInterval(activationCheckIntervals[key]); // Clear all periodic checks
+    });
+    Object.keys(periodicPollTimers).forEach(key => {
+      clearInterval(periodicPollTimers[key]);
+      delete periodicPollTimers[key];
     });
     plugin.exit();
   }
@@ -184,6 +248,10 @@ module.exports = async function (plugin) {
   process.on('SIGTERM', async () => {
     Object.keys(activationCheckIntervals).forEach(key => {
       clearInterval(activationCheckIntervals[key]); // Clear all periodic checks
+    });
+    Object.keys(periodicPollTimers).forEach(key => {
+      clearInterval(periodicPollTimers[key]);
+      delete periodicPollTimers[key];
     });
     if (timeSyncTimer) clearTimeout(timeSyncTimer);
     plugin.exit();
@@ -224,6 +292,7 @@ module.exports = async function (plugin) {
           use_redundancy: item.use_redundancy,
           host_redundancy: item.host_redundancy,
           timesync: item.timesync,
+          periodpoll: item.periodpoll !== undefined ? Number(item.periodpoll) : 30,
           k: item.paramk || 12,
           w: item.paramw || 8,
           t0: item.paramt0 || 30,
@@ -265,6 +334,7 @@ module.exports = async function (plugin) {
           use_redundancy: v1.use_redundancy,
           host_redundancy: v1.host_redundancy,
           timesync: v1.timesync,
+          periodpoll: v1.periodpoll, 
           k: v1.paramk || 12,
           w: v1.paramw || 8,
           t0: v1.paramt0 || 30,

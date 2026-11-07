@@ -7,7 +7,7 @@
   "hasTryStartState":1,
   "linkChstatus":1,
 
-  "share_node_folder_fields":["nodeip", "nodeport", "asduAddress", "use_redundancy", "host_redundancy", "paramk", "paramw", "paramt0", "paramt1", "paramt2", "paramt3", "tzondevice", "timesync"],
+  "share_node_folder_fields":["nodeip", "nodeport", "asduAddress", "use_redundancy", "host_redundancy", "paramk", "paramw", "paramt0", "paramt1", "paramt2", "paramt3", "tzondevice", "timesync", "periodpoll"],
 
   "channel_popup": {
     "add": [
